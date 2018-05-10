@@ -1,0 +1,3 @@
+- name: Firewalld Disabled
+  service: name=firewalld enabled=false state=stopped
+  ignore_errors: true

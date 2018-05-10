@@ -1,0 +1,27 @@
+- name: old mariadb-libs remove
+  yum: name=mariadb-libs state=absent
+
+- name: install / Import repository key
+  yum_repository:
+    name: mariadb
+    description: Mariadb
+    baseurl: http://yum.mariadb.org/{{ mariadb_version }}/centos7-amd64
+    gpgkey: https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
+    gpgcheck: true
+
+- name: install / Install required packages
+  yum:
+    name: "{{ item }}"
+    state: present
+    enablerepo: mariadb
+  with_items: "{{ mariadb_packages }}"
+
+- name: Be sure mariadb is running and enabled
+  service: name=mariadb state=started enabled=yes
+
+- name: Set MariaDB root password for the first time
+  mysql_user:
+    name: root
+    password: "{{ mariadb_root_password }}"
+    host_all: yes
+    state: present

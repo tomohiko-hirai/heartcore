@@ -1,0 +1,10 @@
+---
+mariadb_version: "10.2"
+mariadb_databases: "" 
+mariadb_users: ""
+mariadb_packages:
+  - MariaDB-server
+  - MariaDB-client
+  - MariaDB-devel
+  - MySQL-python
+mariadb_root_passwd: "P@ssw0rd"

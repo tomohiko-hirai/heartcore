@@ -1,0 +1,40 @@
+- name: Java Install Check
+  shell: which java
+  register: java_which
+  failed_when: java_which.rc not in [0,1]
+
+- name: Install Java
+  yum: name={{ java_packages }} state=present
+  when: java_which.rc == 1
+
+- name: JAVA_HOME configured
+  template: src=java.sh.j2 dest=/etc/profile.d/java.sh
+
+- name: add group tomcat
+  group: name=tomcat
+
+- name: add user tomcat
+  user: name=tomcat group=tomcat home=/sbin/nologin createhome=no
+
+- name: Download Tomcat
+  get_url: url=http://www-us.apache.org/dist/tomcat/tomcat-8/v8.5.30/bin/apache-tomcat-8.5.30.tar.gz dest=/usr/local/src/apache-tomcat-8.5.30.gz
+
+- name: Extract archive
+  command: chdir=/usr/local/src /bin/tar xvf /usr/local/src/apache-tomcat-8.5.30.gz -C /opt/ creates=/opt/apache-tomcat-8.5.30
+
+- name: Symlink install directory
+  file: src=/opt/apache-tomcat-8.5.30 path=/opt/tomcat state=link
+
+- name: Change ownership of Tomcat installation
+  file: path=/opt/ owner=tomcat group=tomcat state=directory recurse=yes
+
+- name: CATALINA_HOME configured
+  template: src=tomcat.sh.j2 dest=/etc/profile.d/tomcat.sh
+
+- name: Init Tomcat init script
+  template: src=tomcat.service.j2 dest=/etc/systemd/system/tomcat.service mode=0755
+  notify:
+    - restart tomcat
+
+- name: Be sure Tomcat is running adn enabled
+  service: name=tomcat state=started enabled=yes

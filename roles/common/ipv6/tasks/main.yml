@@ -1,0 +1,4 @@
+- name: disable ipv6
+  template: src=disable_ipv6.conf.j2 dest=/etc/sysctl.d/disable_ipv6.conf
+  notify:
+    - run sysctl

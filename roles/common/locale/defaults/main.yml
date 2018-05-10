@@ -1,0 +1,10 @@
+---
+# Select timezone from following command results
+# timedatectl list-timezones
+# localectl list-locales
+# localectl list-keymaps
+#
+locale_timezone: "Asia/Tokyo"
+locale_locale: "ja_JP.utf8"
+locale_keymap: "jp"
+
